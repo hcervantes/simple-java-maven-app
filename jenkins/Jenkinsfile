@@ -5,6 +5,7 @@ node {
   stage('Env check') {
 	sh 'echo "Branch name:"'
 	sh 'echo $BRANCH_NAME'
+	sh 'printenv'
   }
   if (env.BRANCH_NAME == 'master') {
     stage ('Some Stage 1 for master') {
