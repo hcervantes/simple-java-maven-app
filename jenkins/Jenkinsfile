@@ -1,30 +1,26 @@
-pipeline {
-    agent {
-        docker {
-            image 'maven:3-alpine'
-            args '-v /root/.m2:/root/.m2'
-        }
+node {
+  checkout scm
+  def workspace = pwd()
+
+  if (env.BRANCH_NAME == 'master') {
+    stage ('Some Stage 1 for master') {
+      sh 'echo "do something for master"'
     }
-    stages {
-        stage('Build') {
-            steps {
-                sh 'mvn -B -DskipTests clean package'
-            }
-        }
-        stage('Test') {
-            steps {
-                sh 'mvn test'
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
-                }
-            }
-        }
-        stage('Deliver') {
-            steps {
-                sh './jenkins/scripts/deliver.sh'
-            }
-        }
+    stage ('Another Stage for Master') {
+      sh 'echo "do something else for master"'
     }
+  }
+
+  else if (env.BRANCH_NAME == 'stage') {
+    stage ('Some stage branch step') {
+      sh 'echo "do something for stage branch"'
+    }
+    stage ('Deploy to stage target') {
+      sh 'echo "do something else deploy to stage target"'
+    }
+  }
+
+  else {
+    sh 'echo "Branch not applicable to Jenkins... do nothing"'
+  }
 }
